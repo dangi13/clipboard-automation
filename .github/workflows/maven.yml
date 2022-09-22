@@ -1,0 +1,36 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Clipboard UI Automation
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+        cache: maven
+    - name: Run UI tests
+      env: # lookup key as an environment variable
+        BROWSERSTACK_URL: ${{ secrets.BROWSERSTACK_URL }}
+      run: mvn clean install -f clipboard-automation/pom.xml
+    - name: Save test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+          name: test-result
+          path: |
+            clipboard-automation/test-result
