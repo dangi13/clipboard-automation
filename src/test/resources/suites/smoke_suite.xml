@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smoke" verbose="8">
+	<listeners>
+		<listener class-name="com.ch.listeners.CustomReporter" />
+	</listeners>
+
+	<test name="AmazonTest">
+		<parameter name="browser" value="chrome" />
+		<parameter name="nodeURL" value="" /> <!-- any server/machine URL where grid is connected or cloud url e.g SauceLabs,BrowserStack 
+			etc -->
+		<classes>
+			<class name="com.ch.tests.web.AmazonTest">
+				<methods>
+					<include name="test_abount_this_item_section" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
