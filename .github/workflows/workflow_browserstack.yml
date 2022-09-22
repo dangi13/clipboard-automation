@@ -26,11 +26,11 @@ jobs:
     - name: Run UI tests
       env: # lookup key as an environment variable
         BROWSERSTACK_URL: ${{ secrets.BROWSERSTACK_URL }}
-      run: mvn clean install -f clipboard-automation/pom.xml
+      run: mvn clean install -f pom.xml
     - name: Save test results
       if: always()
       uses: actions/upload-artifact@v3
       with:
           name: test-result
           path: |
-            clipboard-automation/test-result
+            test-result
