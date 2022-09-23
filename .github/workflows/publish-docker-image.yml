@@ -1,0 +1,45 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Docker Build Image
+
+on:
+  push:
+    tags:
+      - '*'
+    branches: [ "master" ]
+  pull_request:
+     branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+        
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+         registry: ghcr.io
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: package docker
+      run: |
+          VERSION=$(date +%s)
+          docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN}}
+          docker build . --file Dockerfile --tag docker.pkg.github.com/dangi13/clipboard-automation/clipboard-tests:${VERSION} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN}}
+          docker push docker.pkg.github.com/dangi13/clipboard-automation/clipboard-tests:${VERSION}  
+      env:
+          CI: true
